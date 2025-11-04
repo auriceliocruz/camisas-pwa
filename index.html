@@ -6,50 +6,61 @@
   <title>Pedidos de Camisas Personalizadas</title>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#2563eb" />
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+      font-family: 'Inter', sans-serif;
+      color: #f8fafc;
+      min-height: 100vh;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .btn-grad {
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      transition: 0.3s;
+    }
+    .btn-grad:hover {
+      background: linear-gradient(90deg, #2563eb, #0891b2);
+      transform: scale(1.03);
+    }
+  </style>
 </head>
 
-<body class="bg-gray-100 min-h-screen flex flex-col items-center p-6">
-
-  <header class="text-center mb-8">
-    <h1 class="text-3xl font-bold text-blue-700 mb-1">👕 Pedidos de Camisas</h1>
-    <p class="text-gray-600">Personalize camisas de time com facilidade</p>
+<body class="flex flex-col items-center p-6">
+  <header class="text-center mb-10">
+    <h1 class="text-4xl font-extrabold tracking-tight text-cyan-400">⚽ Pedidos de Camisas</h1>
+    <p class="text-gray-300 mt-2">Personalize camisas e gere PDFs organizados</p>
   </header>
 
-  <!-- Formulário -->
-  <form id="pedidoForm" class="bg-white shadow-xl rounded-2xl p-6 w-full max-w-md space-y-4">
-    <input type="text" id="time" placeholder="Nome do Time" required class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
-    <input type="text" id="personalizacao" placeholder="Nome/Texto da Camisa" required class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
-
-    <select id="tamanho" required class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-      <option value="">Selecione o tamanho (Europa)</option>
-      <option value="XS">XS</option>
-      <option value="S">S</option>
-      <option value="M">M</option>
-      <option value="L">L</option>
-      <option value="XL">XL</option>
-      <option value="XXL">XXL</option>
-      <option value="3XL">3XL</option>
+  <form id="pedidoForm" class="glass rounded-2xl p-6 w-full max-w-lg space-y-4">
+    <input id="time" type="text" placeholder="Nome do Time" required class="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 border border-white/20 focus:ring-2 focus:ring-cyan-400 outline-none" />
+    <input id="personalizacao" type="text" placeholder="Nome/Texto da Camisa" required class="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 border border-white/20 focus:ring-2 focus:ring-cyan-400 outline-none" />
+    <select id="tamanho" required class="w-full p-3 rounded-lg bg-white/10 text-white border border-white/20 focus:ring-2 focus:ring-cyan-400 outline-none">
+      <option value="">Tamanho (Europa)</option>
+      <option value="XS">XS</option><option value="S">S</option><option value="M">M</option>
+      <option value="L">L</option><option value="XL">XL</option><option value="XXL">XXL</option><option value="3XL">3XL</option>
     </select>
-
     <div>
-      <label class="block text-gray-600 text-sm mb-1">Foto da Camisa</label>
-      <input type="file" id="foto" accept="image/*" class="w-full border p-3 rounded-lg" />
+      <label class="block text-sm text-gray-300 mb-1">Foto da Camisa</label>
+      <input id="foto" type="file" accept="image/*" class="w-full p-3 rounded-lg bg-white/10 text-white border border-white/20 cursor-pointer" />
       <div id="previewContainer" class="mt-3 hidden">
-        <img id="previewImage" src="" class="w-full h-56 object-cover rounded-xl border shadow-md" />
+        <img id="previewImage" src="" class="w-full h-56 object-cover rounded-xl shadow-lg border border-white/20" />
       </div>
     </div>
-
-    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white w-full py-3 rounded-lg font-semibold transition">Adicionar Pedido</button>
+    <button type="submit" class="btn-grad text-white w-full py-3 rounded-lg font-semibold">Adicionar Pedido</button>
   </form>
 
-  <!-- Lista -->
-  <div class="w-full max-w-3xl mt-8">
-    <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">📦 Lista de Pedidos</h2>
-    <div id="listaPedidos" class="grid md:grid-cols-2 gap-4"></div>
-    <button id="gerarPDF" class="bg-green-600 hover:bg-green-700 text-white w-full py-3 mt-6 rounded-lg font-semibold transition">Gerar PDF</button>
-  </div>
+  <section class="w-full max-w-5xl mt-10">
+    <h2 class="text-2xl font-semibold mb-4 text-center text-cyan-300">📦 Lista de Pedidos</h2>
+    <div id="listaPedidos" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    <button id="gerarPDF" class="btn-grad text-white w-full py-3 mt-8 rounded-lg font-semibold">Gerar PDF</button>
+  </section>
 
   <script>
     const pedidos = [];
@@ -59,7 +70,6 @@
     const previewContainer = document.getElementById('previewContainer');
     const previewImage = document.getElementById('previewImage');
 
-    // Mostrar pré-visualização
     fotoInput.addEventListener('change', () => {
       const file = fotoInput.files[0];
       if (file) {
@@ -69,20 +79,15 @@
           previewContainer.classList.remove('hidden');
         };
         reader.readAsDataURL(file);
-      } else {
-        previewContainer.classList.add('hidden');
-      }
+      } else previewContainer.classList.add('hidden');
     });
 
-    // Adicionar pedido
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-
       const time = document.getElementById('time').value;
       const personalizacao = document.getElementById('personalizacao').value;
       const tamanho = document.getElementById('tamanho').value;
       const file = fotoInput.files[0];
-
       const reader = new FileReader();
       reader.onload = function(evt) {
         const fotoBase64 = evt.target.result;
@@ -91,10 +96,8 @@
         form.reset();
         previewContainer.classList.add('hidden');
       };
-
-      if (file) {
-        reader.readAsDataURL(file);
-      } else {
+      if (file) reader.readAsDataURL(file);
+      else {
         pedidos.push({ time, personalizacao, tamanho, foto: null });
         atualizarLista();
         form.reset();
@@ -102,74 +105,86 @@
       }
     });
 
-    // Atualizar lista visual
     function atualizarLista() {
       listaPedidos.innerHTML = '';
-      pedidos.forEach((p, i) => {
+      pedidos.forEach(p => {
         const card = document.createElement('div');
-        card.className = "bg-white rounded-2xl shadow-lg overflow-hidden transition hover:shadow-2xl";
-
+        card.className = "glass rounded-2xl overflow-hidden shadow-lg";
         const img = document.createElement('img');
         img.src = p.foto || 'https://via.placeholder.com/400x250?text=Sem+Imagem';
-        img.className = "w-full h-56 object-cover";
-
+        img.className = "w-full h-48 object-cover";
         const info = document.createElement('div');
         info.className = "p-4";
         info.innerHTML = `
-          <h3 class="text-lg font-semibold text-gray-800 mb-1">${p.time}</h3>
-          <p class="text-gray-600 text-sm">Personalização: <strong>${p.personalizacao}</strong></p>
-          <p class="text-gray-600 text-sm mt-1">Tamanho (EU): <strong>${p.tamanho}</strong></p>
+          <h3 class="text-xl font-bold text-cyan-300 mb-1">${p.time}</h3>
+          <p class="text-gray-200 text-sm">Personalização: <strong>${p.personalizacao}</strong></p>
+          <p class="text-gray-200 text-sm mt-1">Tamanho (EU): <strong>${p.tamanho}</strong></p>
         `;
-
         card.appendChild(img);
         card.appendChild(info);
         listaPedidos.appendChild(card);
       });
     }
 
-    // Gerar PDF
+    // 🧾 PDF — IMAGEM ABAIXO DO TEXTO
     document.getElementById('gerarPDF').addEventListener('click', () => {
       const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ orientation: 'portrait' });
-      let y = 20;
-
-      doc.setFontSize(16);
-      doc.text("Lista de Pedidos de Camisas Personalizadas", 35, y);
-      y += 10;
+      const doc = new jsPDF("p", "mm", "a4");
+      const pageWidth = 210;
+      const margin = 10;
+      const cardWidth = 90;
+      const cardHeight = 100;
+      let x = margin;
+      let y = margin + 10;
+      doc.setFontSize(18);
+      doc.text("Pedidos de Camisas Personalizadas", 40, 15);
+      doc.setFontSize(11);
 
       pedidos.forEach((p, i) => {
-        doc.setFontSize(13);
-        y += 10;
-        doc.text(`${i + 1}. Time: ${p.time}`, 10, y);
-        y += 7;
-        doc.text(`Personalização: ${p.personalizacao}`, 10, y);
-        y += 7;
-        doc.text(`Tamanho (EU): ${p.tamanho}`, 10, y);
+        // Desenhar o retângulo
+        doc.setDrawColor(120, 120, 120);
+        doc.setLineWidth(0.3);
+        doc.rect(x, y, cardWidth, cardHeight, "S");
 
+        // Texto no topo
+        let textY = y + 10;
+        doc.text(`Time: ${p.time}`, x + 5, textY);
+        textY += 6;
+        doc.text(`Personalização: ${p.personalizacao}`, x + 5, textY);
+        textY += 6;
+        doc.text(`Tamanho (EU): ${p.tamanho}`, x + 5, textY);
+
+        // Imagem abaixo do texto
         if (p.foto) {
-          y += 5;
-          const imgWidth = 70;
-          const imgHeight = 50;
-          doc.addImage(p.foto, 'JPEG', 120, y - 10, imgWidth, imgHeight);
-          y += imgHeight + 10;
-        } else {
-          y += 10;
+          const imgWidth = 60;
+          const imgHeight = 40;
+          const imgX = x + (cardWidth - imgWidth) / 2;
+          const imgY = textY + 5;
+          doc.addImage(p.foto, "JPEG", imgX, imgY, imgWidth, imgHeight);
         }
 
-        if (y > 260) {
+        // Próximo card
+        x += cardWidth + 10;
+        if (x + cardWidth > pageWidth - margin) {
+          x = margin;
+          y += cardHeight + 10;
+        }
+
+        // Nova página se precisar
+        if (y + cardHeight > 280) {
           doc.addPage();
-          y = 20;
+          x = margin;
+          y = margin + 10;
         }
       });
 
       doc.save("pedidos_camisas.pdf");
     });
 
-    // Instalação do PWA
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
-        .then(() => console.log("✅ Service Worker registrado com sucesso"))
-        .catch((err) => console.error("Erro ao registrar Service Worker:", err));
+        .then(() => console.log("✅ Service Worker ativo"))
+        .catch(err => console.error("Erro no SW:", err));
     }
   </script>
 </body>
